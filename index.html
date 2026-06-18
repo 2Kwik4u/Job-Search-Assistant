@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Julie Watkins Job Search Assistant</title>
+    <meta name="theme-color" content="#4f7a62" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1d252d" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Julie Jobs">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icons/icon-192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192.png">
+    <script>
+      (function () {
+        try {
+          var preference = localStorage.getItem("julie-theme-preference") || "system";
+          document.documentElement.dataset.themePreference = preference;
+          if (preference === "light" || preference === "dark") {
+            document.documentElement.dataset.theme = preference;
+          }
+        } catch (error) {
+          document.documentElement.dataset.themePreference = "system";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Review-first workflow</p>
+        <h1>Julie Watkins Job Search Assistant</h1>
+        <p class="lede">Find targeted searches, import promising listings, analyze fit, and track applications without auto-applying.</p>
+      </div>
+      <div class="safety-card">
+        <strong>Human approval required</strong>
+        <span>No application is submitted from this app. Every listing stays in review until Julie chooses to apply.</span>
+      </div>
+      <label class="theme-control">
+        Theme
+        <select id="themeSelect" aria-label="Theme preference">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
+    </header>
+
+    <main>
+      <section class="strategy-band" aria-labelledby="strategy-title">
+        <div class="section-title">
+          <p class="eyebrow">Best-fit searches</p>
+          <h2 id="strategy-title">Search Strategy</h2>
+        </div>
+        <div class="strategy-grid" id="strategyGrid"></div>
+      </section>
+
+      <section class="panel finder-panel" aria-labelledby="finder-title">
+        <div class="tracker-heading">
+          <div class="section-title">
+            <p class="eyebrow">Job Discovery</p>
+            <h2 id="finder-title">Find and Import Jobs</h2>
+          </div>
+          <div class="finder-controls">
+            <label>
+              Role angle
+              <select id="searchAngle"></select>
+            </label>
+            <label>
+              Location
+              <select id="searchLocation">
+                <option>Remote</option>
+                <option>Hybrid</option>
+                <option>Gainesville, FL</option>
+                <option>Florida</option>
+                <option>United States</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="search-link-grid" id="searchLinks"></div>
+
+        <details class="import-box">
+          <summary>Bulk import copied listings</summary>
+          <p>Paste one or more jobs. Separate jobs with a blank line. Use the first line as title, second as company, and include any link or details below.</p>
+          <textarea id="bulkImportText" rows="8" placeholder="Onboarding Specialist&#10;Example Co&#10;https://example.com/job&#10;Remote - $55,000-$70,000&#10;Paste description or notes here..."></textarea>
+          <div class="actions">
+            <button type="button" id="importListings">Review Parsed Listings</button>
+            <button type="button" class="secondary" id="clearImport">Clear Import</button>
+          </div>
+        </details>
+
+        <section class="import-review" id="importReview" hidden aria-live="polite">
+          <div class="tracker-heading">
+            <div>
+              <h3>Import Review</h3>
+              <p id="importReviewSummary">Review parsed jobs before saving them to the tracker.</p>
+            </div>
+            <div class="actions">
+              <button type="button" id="saveSelectedDrafts">Save Selected Drafts</button>
+              <button type="button" class="secondary" id="discardDrafts">Discard Drafts</button>
+            </div>
+          </div>
+          <div class="draft-list" id="draftList"></div>
+        </section>
+      </section>
+
+      <section class="workspace-grid">
+        <form class="panel analyzer-panel" id="jobForm">
+          <div class="section-title">
+            <p class="eyebrow">Fit and tailoring review</p>
+            <h2>Analyze a Job</h2>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              Company
+              <input name="company" autocomplete="organization" placeholder="Company name">
+            </label>
+            <label>
+              Job title
+              <input name="title" autocomplete="off" placeholder="Onboarding Specialist">
+            </label>
+            <label>
+              Link
+              <input name="link" type="url" placeholder="https://...">
+            </label>
+            <label>
+              Remote status
+              <select name="remoteStatus">
+                <option>Remote</option>
+                <option>Hybrid</option>
+                <option>On-site</option>
+                <option>Unknown</option>
+              </select>
+            </label>
+            <label>
+              Salary range
+              <input name="salary" placeholder="$55,000 - $70,000">
+            </label>
+            <label>
+              Source
+              <select name="source">
+                <option>LinkedIn</option>
+                <option>Indeed</option>
+                <option>FlexJobs</option>
+                <option>Remote.co</option>
+                <option>We Work Remotely</option>
+                <option>Idealist</option>
+                <option>Company site</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Job description
+            <textarea name="description" rows="12" placeholder="Paste the full job description here."></textarea>
+          </label>
+
+          <div class="actions">
+            <button type="submit">Analyze and Save</button>
+            <button type="button" class="secondary" id="clearForm">Clear</button>
+          </div>
+        </form>
+
+        <aside class="panel results-panel" aria-live="polite">
+          <div class="section-title">
+            <p class="eyebrow">Latest Analysis</p>
+            <h2>Fit Review</h2>
+          </div>
+          <div id="emptyResults" class="empty-state">
+            Paste a job description to score it against Julie's strongest role angles.
+          </div>
+          <div id="analysisResults" hidden></div>
+        </aside>
+      </section>
+
+      <section class="panel tracker-panel" aria-labelledby="tracker-title">
+        <div class="tracker-heading">
+          <div class="section-title">
+            <p class="eyebrow">Application pipeline</p>
+            <h2 id="tracker-title">Application Tracker</h2>
+          </div>
+          <div class="actions">
+            <button type="button" class="secondary" id="exportJson">Export JSON</button>
+            <button type="button" class="secondary" id="exportCsv">Export CSV</button>
+            <button type="button" class="danger" id="clearTracker">Clear Tracker</button>
+          </div>
+        </div>
+
+        <div class="tracker-summary" id="trackerSummary"></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Score</th>
+                <th>Angle</th>
+                <th>Remote</th>
+                <th>Salary</th>
+                <th>Status</th>
+                <th>Follow-up</th>
+                <th>Notes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="trackerRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <template id="tagTemplate">
+      <span class="tag"></span>
+    </template>
+
+    <script src="app.js"></script>
+    <script>
+      if (
+        "serviceWorker" in navigator &&
+        (location.protocol === "https:" ||
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1")
+      ) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("./service-worker.js");
+        });
+      }
+    </script>
+  </body>
+</html>

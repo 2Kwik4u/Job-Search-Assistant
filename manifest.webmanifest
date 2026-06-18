@@ -1,0 +1,24 @@
+{
+  "name": "Julie Job Search Assistant",
+  "short_name": "Julie Jobs",
+  "description": "A local-first, review-first job search assistant for Julie Watkins.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1ece4",
+  "theme_color": "#4f7a62",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
