@@ -12,7 +12,9 @@
 - Added targeted job search links.
 - Added manual job-description analysis.
 - Added bulk import of copied job listings.
-- Added fit score, fit tier, matched keywords, missing keywords, weak-fit signals, and red flags.
+- Added fit score, fit tier, matched keywords, possible keyword gaps, weak-fit signals, and red flags.
+- Added score explanation showing baseline, boosts, penalties, and tier thresholds.
+- Clarified keyword-gap output so Julie's known skills are not shown as missing when a job post does not mention them.
 - Added truthful tailoring bullet suggestions.
 - Added short outreach message draft.
 - Added local application tracker.
@@ -42,6 +44,7 @@ Priority work:
 - Manually review light, dark, and system themes in a real browser.
 - Deploy to GitHub Pages and verify installability on Android.
 - Validate the scoring logic against real pasted listings.
+- Confirm score explanations make sense to Julie during real use.
 - Confirm import review behavior with realistic copied job posts.
 - Improve clarity of review output before adding more automation.
 - Keep all application actions manual and approval-based.

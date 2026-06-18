@@ -6,6 +6,18 @@ Julie Watkins Job Search Assistant is a local, review-first web app for finding,
 
 The app is intentionally lightweight. It runs as static HTML, CSS, and JavaScript in the browser. It does not require a backend, account login, database server, or job-board automation.
 
+Repository:
+
+```text
+https://github.com/2Kwik4u/Job-Search-Assistant
+```
+
+Expected GitHub Pages URL:
+
+```text
+https://2kwik4u.github.io/Job-Search-Assistant/
+```
+
 ## Problem the App Solves
 
 Job searches can become noisy fast. The goal of this app is to help Julie focus on strong-fit roles instead of applying broadly to low-quality or poorly matched listings.
@@ -31,8 +43,9 @@ The app helps with four practical questions:
 - Bulk import of copied job listings into an editable draft review screen.
 - Manual job-description paste and fit analysis.
 - Julie-specific scoring against her strongest role angles.
+- Score explanation showing the baseline, boosts, penalties, and fit tiers.
 - Matched skill, tool, and keyword detection.
-- Missing keyword and weak-fit signal detection.
+- Possible keyword gap and weak-fit signal detection.
 - Scam and suspicious-job red flag detection.
 - Truthful resume-tailoring suggestions.
 - Short outreach message draft.
@@ -62,6 +75,7 @@ The current app supports:
   - delete unwanted drafts
   - save only selected drafts
 - Immediate scoring for manually pasted or imported jobs.
+- A `Why this score?` explanation for each analysis.
 - Duplicate detection by link or company/title.
 - Local application tracking in browser storage.
 - Export to JSON or CSV.
@@ -94,22 +108,22 @@ node --check app.js
 
 ## GitHub Pages Setup
 
-This app is designed to work as a static GitHub Pages site under a repository URL such as:
+This app is designed to work as a static GitHub Pages site under this repository URL:
 
 ```text
-https://username.github.io/repository-name/
+https://2kwik4u.github.io/Job-Search-Assistant/
 ```
 
 All PWA paths are relative so the app can live under a repository path instead of a domain root.
 
 To publish with GitHub Pages:
 
-1. Commit the project files to a GitHub repository.
+1. Commit the project files to `https://github.com/2Kwik4u/Job-Search-Assistant`.
 2. In GitHub, open the repository settings.
 3. Go to `Pages`.
 4. Set the source to the branch and folder that contain `index.html`.
 5. Save the Pages settings.
-6. Open the published URL after GitHub Pages finishes deploying.
+6. Open `https://2kwik4u.github.io/Job-Search-Assistant/` after GitHub Pages finishes deploying.
 
 Before switching from the local file version to the GitHub Pages version, export a backup from the tracker:
 
@@ -117,7 +131,7 @@ Before switching from the local file version to the GitHub Pages version, export
 2. Use `Export JSON` or `Export CSV`.
 3. Keep the export as a backup before using the hosted version.
 
-Important data note: browser storage is origin-specific. Data saved in the local file version is separate from data saved at `https://username.github.io/repository-name/`. Installing the GitHub Pages version on Android will use the GitHub Pages origin, not the local `file://` origin.
+Important data note: browser storage is origin-specific. Data saved in the local file version is separate from data saved at `https://2kwik4u.github.io/Job-Search-Assistant/`. Installing the GitHub Pages version on Android will use the GitHub Pages origin, not the local `file://` origin.
 
 ## Android Install Instructions
 
@@ -138,7 +152,7 @@ The service worker uses a versioned cache name in `service-worker.js`.
 
 When future app files change:
 
-1. Update the cache name, for example from `julie-job-search-app-v0.5.0` to a newer version.
+1. Update the cache name, for example from `julie-job-search-app-v0.5.3` to a newer version.
 2. Commit and deploy the changed files to GitHub Pages.
 3. Reload the app after deployment.
 4. The new service worker will cache the updated app shell and remove older app-shell caches.
@@ -200,6 +214,7 @@ This means:
 - Offline support covers only the cached app shell, not external job boards.
 - No PDF or DOCX resume parsing in the app.
 - Fit scoring is rule-based and should be treated as a review aid, not an objective truth.
+- Score explanations describe the current rule-based formula but do not replace human judgment.
 - Bulk import works best when copied listings follow the expected title/company/details format.
 - Duplicate warnings are advisory and should be reviewed before saving selected drafts.
 - Theme support depends on browser support for CSS variables, `prefers-color-scheme`, and localStorage.

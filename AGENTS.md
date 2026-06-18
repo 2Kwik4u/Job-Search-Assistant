@@ -52,11 +52,15 @@ After coding:
 ## Current Technical Shape
 
 - Static browser app.
+- Repository: `https://github.com/2Kwik4u/Job-Search-Assistant`.
+- Expected GitHub Pages URL: `https://2kwik4u.github.io/Job-Search-Assistant/`.
 - Main files: `index.html`, `styles.css`, `app.js`.
 - PWA files: `manifest.webmanifest`, `service-worker.js`, `icons/icon-192.png`, `icons/icon-512.png`.
 - Data storage: browser `localStorage`.
 - Theme preference storage: browser `localStorage` key `julie-theme-preference`.
 - Service worker cache names must be versioned when cached app-shell files change.
+- `Possible keyword gaps` should mean terms found in the job post that need review, not Julie skills absent from the posting.
+- Score explanations should make the existing formula visible before changing the formula itself.
 - No package manager or build step.
 - No backend.
 - No automated job submissions.

@@ -11,3 +11,6 @@
 | 2026-06-05 | Make imported jobs pass through an editable import review screen before saving. | Correcting parsed jobs before saving improves trust and usability without adding risky automation. | Active |
 | 2026-06-05 | Add Light, Dark, and System theme modes using CSS variables and localStorage. | The app needs to support different user preferences while preserving the local, review-first workflow. | Active |
 | 2026-06-05 | Add GitHub Pages-ready PWA support with relative paths and app-shell-only caching. | Julie should be able to install the static app on Android while preserving localStorage-only data and review-first behavior. | Active |
+| 2026-06-18 | Use `2Kwik4u/Job-Search-Assistant` as the project repository. | The user identified this as the canonical GitHub repository for the project. | Active |
+| 2026-06-18 | Show `Possible keyword gaps` only for watched terms found in the job post. | Julie's known skills should not appear as missing just because the job post omits those words. | Active |
+| 2026-06-18 | Show a score explanation without changing the scoring formula. | Julie and reviewers need to understand why a role received its fit score before trusting or acting on it. | Active |

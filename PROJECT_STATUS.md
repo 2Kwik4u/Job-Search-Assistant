@@ -2,7 +2,7 @@ Project Status Report
 
 Version
 
-0.5.0 - GitHub Pages PWA support.
+0.5.3 - Score explanation added.
 
 Completed This Session
 
@@ -33,26 +33,41 @@ Completed This Session
 - Added Android install instructions for the GitHub Pages URL.
 - Documented localStorage origin separation between local `file://` use and GitHub Pages.
 - Documented backup/export reminder before switching to the hosted version.
+- Recorded the project repository: `https://github.com/2Kwik4u/Job-Search-Assistant`.
+- Recorded the expected GitHub Pages URL: `https://2kwik4u.github.io/Job-Search-Assistant/`.
+- Fixed misleading fit-review output where Julie's known tools, such as Smartsheet or Jira, could appear under `Missing or weak keywords` when the job post did not mention them.
+- Replaced that section with `Possible keyword gaps`, based on terms that appear in the job post and may need manual review.
+- Preserved existing fit scoring logic.
+- Bumped the service worker cache name to `julie-job-search-app-v0.5.2` because `app.js` changed.
+- Added a `Why this score?` explanation below the fit score.
+- The explanation shows the neutral baseline, role keyword boosts, tool boosts, transferable-strength boosts, weak-fit penalties, red-flag penalties, remote-clarity penalties, and tier thresholds.
+- Preserved the existing scoring formula while making it visible.
+- Bumped the service worker cache name to `julie-job-search-app-v0.5.3` because `app.js` and `styles.css` changed.
 
 Current State
 
 The app is a static local web app using `index.html`, `styles.css`, and `app.js`.
 
-It supports targeted job-search links, manual job-description analysis, editable bulk import review, Julie-specific fit scoring, truthful tailoring suggestions, suspicious-job red flags, local application tracking, JSON/CSV export, persistent Light/Dark/System themes, descriptive section labels, and GitHub Pages-ready PWA install support.
+Repository: `https://github.com/2Kwik4u/Job-Search-Assistant`
+
+Expected GitHub Pages URL: `https://2kwik4u.github.io/Job-Search-Assistant/`
+
+It supports targeted job-search links, manual job-description analysis, editable bulk import review, Julie-specific fit scoring with score explanation, truthful tailoring suggestions, possible keyword gap review, suspicious-job red flags, local application tracking, JSON/CSV export, persistent Light/Dark/System themes, descriptive section labels, and GitHub Pages-ready PWA install support.
 
 The project is explicitly not an auto-apply bot. Every job remains subject to human review.
 
 Roadmap Progress
 
-- Completed: static MVP, analyzer, tracker, search links, bulk import, import review, export, theme system, section-label polish, GitHub Pages PWA support, safety posture, and documentation baseline.
-- Current Milestone: deploy to GitHub Pages and verify Android installability.
+- Completed: static MVP, analyzer, tracker, search links, bulk import, import review, export, theme system, section-label polish, keyword-gap display fix, score explanation, GitHub Pages PWA support, safety posture, and documentation baseline.
+- Current Milestone: connect/publish the project to `2Kwik4u/Job-Search-Assistant`, deploy to GitHub Pages, and verify Android installability.
 - Next Milestone: run a real-listing validation pass with 10-15 copied jobs, checking Light, Dark, System, and installed-PWA behavior during the same pass.
 
 Known Limitations
 
 - Data is stored only in browser localStorage.
 - Theme preference is stored only in browser localStorage.
-- GitHub Pages localStorage is separate from local `file://` localStorage.
+- GitHub Pages localStorage at `https://2kwik4u.github.io/Job-Search-Assistant/` is separate from local `file://` localStorage.
+- This local workspace is not currently initialized as a Git repository.
 - No backend persistence.
 - No job-board API integrations.
 - No direct scraping.
@@ -64,6 +79,7 @@ Known Limitations
 - Bulk import parsing depends on copied text structure.
 - Duplicate warnings are advisory and should be reviewed before saving.
 - Fit scoring is rule-based and should be reviewed by a person.
+- Score explanations show why the rule-based score changed but should still be reviewed by a person.
 - Theme rendering should be manually reviewed in a real browser.
 - Visual browser verification could not be completed because the in-app browser runtime failed to connect in the Codex environment.
 
@@ -71,6 +87,10 @@ Testing Checklist
 
 - Run `node --check app.js`.
 - Run `node --check service-worker.js`.
+- Confirm a `Why this score?` section appears below the score card.
+- Confirm the explanation includes additions, penalties, and tier thresholds.
+- Confirm the fit review says `Possible keyword gaps`, not `Missing or weak keywords`.
+- Confirm known Julie tools are not shown as gaps unless the job post itself uses a watched gap term requiring review.
 - Confirm `manifest.webmanifest` uses relative paths.
 - Confirm `service-worker.js` caches only core app shell files.
 - Open `index.html` in a browser.
@@ -100,19 +120,22 @@ Testing Checklist
 
 Files Modified
 
+- app.js
 - index.html
 - manifest.webmanifest
 - service-worker.js
 - icons/icon-192.png
 - icons/icon-512.png
+- styles.css
 - ROADMAP.md
 - README.md
 - PROJECT_STATUS.md
 - DECISIONS.md
+- AGENTS.md
 
 Recommended Next Step
 
-Publish the static app to GitHub Pages, export a tracker backup from the local file version first, then test Android install from the GitHub Pages URL.
+Have Julie review a few real examples and confirm the score explanation is understandable. Then initialize or connect this local workspace to `https://github.com/2Kwik4u/Job-Search-Assistant`, publish the static app to GitHub Pages, export a tracker backup from the local file version first, and test Android install from the GitHub Pages URL.
 
 Product Manager Notes
 

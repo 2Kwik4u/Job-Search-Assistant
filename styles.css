@@ -427,6 +427,54 @@ textarea:focus {
   color: var(--muted);
 }
 
+.score-explanation {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.score-explanation h3,
+.score-explanation p {
+  margin: 0;
+}
+
+.score-explanation h3 {
+  font-size: 0.95rem;
+}
+
+.score-explanation p,
+.score-explanation span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.score-explanation ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.score-explanation li {
+  display: grid;
+  gap: 0.12rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line);
+}
+
+.score-explanation li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.score-note {
+  font-weight: 700;
+}
+
 .analysis-meta {
   display: grid;
   gap: 0.5rem;

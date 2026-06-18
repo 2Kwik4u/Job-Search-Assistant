@@ -176,6 +176,30 @@
     "travel 75",
   ];
 
+  const keywordGapTerms = [
+    "hubspot",
+    "zendesk",
+    "intercom",
+    "gainsight",
+    "totango",
+    "workday",
+    "sap",
+    "quickbooks",
+    "google analytics",
+    "tableau",
+    "power bi",
+    "advanced excel",
+    "sql",
+    "python",
+    "html",
+    "javascript",
+    "api",
+    "certification required",
+    "bachelor's degree required",
+    "pmp",
+    "scrum master",
+  ];
+
   const redFlagTerms = [
     "telegram",
     "whatsapp",
@@ -493,16 +517,24 @@
     const matchedStrengths = findMatches(haystack, strongFitTerms);
     const weakAreas = findMatches(haystack, weakFitTerms);
     const redFlags = findMatches(haystack, redFlagTerms);
-    const missingKeywords = bestAngle.keywords.filter((keyword) => !haystack.includes(keyword));
+    const keywordGaps = findMatches(haystack, keywordGapTerms);
     const remotePenalty = remoteStatus !== "Remote" && /remote|work from home|distributed/.test(haystack) === false ? 6 : 0;
 
-    let score = 42;
-    score += Math.min(bestAngle.matches.length * 6, 30);
-    score += Math.min(matchedTools.length * 4, 16);
-    score += Math.min(matchedStrengths.length * 2, 14);
-    score -= Math.min(weakAreas.length * 7, 24);
-    score -= Math.min(redFlags.length * 12, 36);
+    const baseline = 42;
+    const roleKeywordPoints = Math.min(bestAngle.matches.length * 6, 30);
+    const toolPoints = Math.min(matchedTools.length * 4, 16);
+    const strengthPoints = Math.min(matchedStrengths.length * 2, 14);
+    const weakSignalPenalty = Math.min(weakAreas.length * 7, 24);
+    const redFlagPenalty = Math.min(redFlags.length * 12, 36);
+
+    let score = baseline;
+    score += roleKeywordPoints;
+    score += toolPoints;
+    score += strengthPoints;
+    score -= weakSignalPenalty;
+    score -= redFlagPenalty;
     score -= remotePenalty;
+    const unclampedScore = score;
     score = Math.max(1, Math.min(100, score));
 
     return {
@@ -513,10 +545,60 @@
       matchedAngleKeywords: bestAngle.matches,
       matchedTools,
       matchedStrengths,
-      missingKeywords: missingKeywords.slice(0, 10),
+      keywordGaps,
       weakAreas,
       redFlags,
       proof: bestAngle.proof,
+      scoreBreakdown: {
+        baseline,
+        additions: [
+          {
+            label: "Role keyword matches",
+            value: roleKeywordPoints,
+            detail: bestAngle.matches.length
+              ? bestAngle.matches.join(", ")
+              : "No strong category keywords from this role angle were found.",
+          },
+          {
+            label: "Julie tool matches",
+            value: toolPoints,
+            detail: matchedTools.length
+              ? matchedTools.join(", ")
+              : "No modeled Julie tools were mentioned in this listing.",
+          },
+          {
+            label: "Transferable strengths",
+            value: strengthPoints,
+            detail: matchedStrengths.length
+              ? matchedStrengths.join(", ")
+              : "Few general strength signals were found in this listing.",
+          },
+        ],
+        penalties: [
+          {
+            label: "Weak-fit signals",
+            value: weakSignalPenalty,
+            detail: weakAreas.length
+              ? weakAreas.join(", ")
+              : "No major weak-fit terms were detected.",
+          },
+          {
+            label: "Safety red flags",
+            value: redFlagPenalty,
+            detail: redFlags.length
+              ? redFlags.join(", ")
+              : "No scam or suspicious-job red flags were detected.",
+          },
+          {
+            label: "Remote clarity",
+            value: remotePenalty,
+            detail: remotePenalty
+              ? "The listing or selected status does not clearly support remote work."
+              : "Remote status is selected or the listing includes remote language.",
+          },
+        ],
+        unclampedScore,
+      },
       suggestedBullets: makeBullets(bestAngle.name),
       messageDraft: makeMessage(bestAngle.name),
       recommendation: makeRecommendation(score, redFlags, weakAreas),
@@ -615,7 +697,9 @@
   }
 
   function renderAnalysis(application) {
-    const { analysis } = application;
+    const analysis = application.analysis && application.analysis.scoreBreakdown
+      ? application.analysis
+      : analyzeJob(application.description || "", application.title || "", application.remoteStatus || "Unknown");
     emptyResults.hidden = true;
     analysisResults.hidden = false;
     analysisResults.innerHTML = `
@@ -630,6 +714,8 @@
         </div>
       </div>
 
+      ${renderScoreExplanation(analysis)}
+
       <dl class="analysis-meta">
         <div><dt>Company</dt><dd>${escapeHtml(application.company)}</dd></div>
         <div><dt>Role</dt><dd>${escapeHtml(application.title)}</dd></div>
@@ -640,7 +726,7 @@
       ${renderTags("Matched role keywords", analysis.matchedAngleKeywords)}
       ${renderTags("Matched tools", analysis.matchedTools)}
       ${renderTags("Transferable strengths", analysis.matchedStrengths)}
-      ${renderTags("Missing or weak keywords", analysis.missingKeywords)}
+      ${renderTags("Possible keyword gaps", analysis.keywordGaps || [])}
       ${renderTags("Weak-fit signals", analysis.weakAreas)}
       ${renderTags("Red flags", analysis.redFlags, "danger")}
 
@@ -658,7 +744,38 @@
     `;
   }
 
+  function renderScoreExplanation(analysis) {
+    const breakdown = analysis.scoreBreakdown;
+    if (!breakdown) return "";
+
+    const totalAdded = breakdown.additions.reduce((sum, item) => sum + item.value, 0);
+    const totalSubtracted = breakdown.penalties.reduce((sum, item) => sum + item.value, 0);
+
+    return `
+      <section class="score-explanation">
+        <h3>Why this score?</h3>
+        <p>This starts from a neutral baseline of ${breakdown.baseline}. The analyzer added ${totalAdded} points for role fit signals and subtracted ${totalSubtracted} points for weak-fit, safety, or remote-clarity concerns.</p>
+        <ul>
+          ${breakdown.additions.map((item) => renderScoreLine(item, "+")).join("")}
+          ${breakdown.penalties.map((item) => renderScoreLine(item, "-")).join("")}
+        </ul>
+        <p class="score-note">Fit tiers: 80-100 is strong, 65-79 is moderate, and below 65 is weak. This is a review aid, not a final decision.</p>
+      </section>
+    `;
+  }
+
+  function renderScoreLine(item, sign) {
+    const value = item.value ? `${sign}${item.value}` : "0";
+    return `
+      <li>
+        <strong>${escapeHtml(value)} ${escapeHtml(item.label)}</strong>
+        <span>${escapeHtml(item.detail)}</span>
+      </li>
+    `;
+  }
+
   function renderTags(title, tags, tone) {
+    tags = Array.isArray(tags) ? tags : [];
     if (!tags.length) return "";
     return `
       <section class="tag-section">
