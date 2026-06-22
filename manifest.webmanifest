@@ -1,7 +1,7 @@
 {
-  "name": "Julie Job Search Assistant",
-  "short_name": "Julie Jobs",
-  "description": "A local-first, review-first job search assistant for Julie Watkins.",
+  "name": "Job Search Assistant",
+  "short_name": "Job Assistant",
+  "description": "A local-first, review-first job search assistant for candidate profile-driven applications.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

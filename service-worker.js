@@ -1,4 +1,4 @@
-const CACHE_NAME = "julie-job-search-app-v0.5.3";
+const CACHE_NAME = "julie-job-search-app-v0.6.1";
 const CACHE_PREFIX = "julie-job-search-app-";
 
 const APP_SHELL = [

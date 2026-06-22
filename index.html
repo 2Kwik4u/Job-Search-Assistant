@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Julie Watkins Job Search Assistant</title>
+    <title>Job Search Assistant</title>
     <meta name="theme-color" content="#4f7a62" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#1d252d" media="(prefers-color-scheme: dark)">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Julie Jobs">
+    <meta name="apple-mobile-web-app-title" content="Job Assistant">
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="./icons/icon-192.png">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -30,13 +30,13 @@
   <body>
     <header class="app-header">
       <div>
-        <p class="eyebrow">Review-first workflow</p>
-        <h1>Julie Watkins Job Search Assistant</h1>
+        <p class="eyebrow">Review-first workflow - Eric Labs</p>
+        <h1>Job Search Assistant</h1>
         <p class="lede">Find targeted searches, import promising listings, analyze fit, and track applications without auto-applying.</p>
       </div>
       <div class="safety-card">
         <strong>Human approval required</strong>
-        <span>No application is submitted from this app. Every listing stays in review until Julie chooses to apply.</span>
+        <span>No application is submitted from this app. Every listing stays in review until the candidate chooses to apply.</span>
       </div>
       <label class="theme-control">
         Theme
@@ -49,171 +49,336 @@
     </header>
 
     <main>
-      <section class="strategy-band" aria-labelledby="strategy-title">
-        <div class="section-title">
-          <p class="eyebrow">Best-fit searches</p>
-          <h2 id="strategy-title">Search Strategy</h2>
+      <section class="migration-banner" id="migrationBanner" hidden aria-live="polite">
+        <div>
+          <strong>Julie tracker data was copied into the new app format.</strong>
+          <p>The old tracker data is still kept in this browser as a safety backup. Export a backup before making big changes or switching devices.</p>
         </div>
-        <div class="strategy-grid" id="strategyGrid"></div>
+        <div class="actions">
+          <button type="button" id="exportFullBackupFromBanner">Export Full Backup</button>
+          <button type="button" class="secondary" id="exportLegacyFromBanner">Export Legacy Julie Tracker</button>
+          <button type="button" class="secondary" id="dismissMigrationBanner">Dismiss</button>
+        </div>
       </section>
 
-      <section class="panel finder-panel" aria-labelledby="finder-title">
-        <div class="tracker-heading">
-          <div class="section-title">
-            <p class="eyebrow">Job Discovery</p>
-            <h2 id="finder-title">Find and Import Jobs</h2>
-          </div>
-          <div class="finder-controls">
-            <label>
-              Role angle
-              <select id="searchAngle"></select>
-            </label>
-            <label>
-              Location
-              <select id="searchLocation">
-                <option>Remote</option>
-                <option>Hybrid</option>
-                <option>Gainesville, FL</option>
-                <option>Florida</option>
-                <option>United States</option>
-              </select>
-            </label>
-          </div>
+      <section class="app-nav-panel" aria-label="Primary app sections">
+        <div class="active-candidate" id="activeCandidateIndicator">No active candidate</div>
+        <nav class="tab-nav" aria-label="Job Search Assistant sections">
+          <button type="button" class="tab-button" data-tab-target="jobs">Jobs</button>
+          <button type="button" class="tab-button" data-tab-target="skills">Skills</button>
+          <button type="button" class="tab-button" data-tab-target="resume">Resume</button>
+          <button type="button" class="tab-button" data-tab-target="settings">Profile / Settings</button>
+        </nav>
+      </section>
+
+      <input id="fullBackupInput" type="file" accept="application/json,.json" hidden>
+      <input id="candidateProfileInput" type="file" accept="application/json,.json" hidden>
+
+      <div id="profileStatus" class="inline-status" hidden></div>
+
+      <div id="profileSetup" class="empty-state setup-state" hidden>
+        <strong>No candidate profile is active yet.</strong>
+        <p>Import a candidate profile or full backup from Profile / Settings, or create a blank local profile and fill it in manually.</p>
+        <div class="actions">
+          <button type="button" id="createBlankProfile">Create Blank Profile</button>
+          <button type="button" class="secondary" data-tab-target="settings">Open Profile / Settings</button>
         </div>
+      </div>
 
-        <div class="search-link-grid" id="searchLinks"></div>
-
-        <details class="import-box">
-          <summary>Bulk import copied listings</summary>
-          <p>Paste one or more jobs. Separate jobs with a blank line. Use the first line as title, second as company, and include any link or details below.</p>
-          <textarea id="bulkImportText" rows="8" placeholder="Onboarding Specialist&#10;Example Co&#10;https://example.com/job&#10;Remote - $55,000-$70,000&#10;Paste description or notes here..."></textarea>
-          <div class="actions">
-            <button type="button" id="importListings">Review Parsed Listings</button>
-            <button type="button" class="secondary" id="clearImport">Clear Import</button>
+      <section class="tab-panel jobs-panel" data-tab-panel="jobs">
+        <section class="strategy-band" aria-labelledby="strategy-title">
+          <div class="section-title">
+            <p class="eyebrow">Best-fit searches</p>
+            <h2 id="strategy-title">Search Strategy</h2>
           </div>
-        </details>
+          <div class="strategy-grid" id="strategyGrid"></div>
+        </section>
 
-        <section class="import-review" id="importReview" hidden aria-live="polite">
+        <section class="panel finder-panel" aria-labelledby="finder-title">
           <div class="tracker-heading">
-            <div>
-              <h3>Import Review</h3>
-              <p id="importReviewSummary">Review parsed jobs before saving them to the tracker.</p>
+            <div class="section-title">
+              <p class="eyebrow">Job Discovery</p>
+              <h2 id="finder-title">Find and Import Jobs</h2>
+            </div>
+            <div class="finder-controls">
+              <label>
+                Role angle
+                <select id="searchAngle"></select>
+              </label>
+              <label>
+                Location
+                <select id="searchLocation">
+                  <option>Remote</option>
+                  <option>Hybrid</option>
+                  <option>Gainesville, FL</option>
+                  <option>Florida</option>
+                  <option>United States</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="search-link-grid" id="searchLinks"></div>
+
+          <details class="import-box">
+            <summary>Bulk import copied listings</summary>
+            <p>Paste one or more jobs. Separate jobs with a blank line. Use the first line as title, second as company, and include any link or details below.</p>
+            <textarea id="bulkImportText" rows="8" placeholder="Onboarding Specialist&#10;Example Co&#10;https://example.com/job&#10;Remote - $55,000-$70,000&#10;Paste description or notes here..."></textarea>
+            <div class="actions">
+              <button type="button" id="importListings">Review Parsed Listings</button>
+              <button type="button" class="secondary" id="clearImport">Clear Import</button>
+            </div>
+          </details>
+
+          <section class="import-review" id="importReview" hidden aria-live="polite">
+            <div class="tracker-heading">
+              <div>
+                <h3>Import Review</h3>
+                <p id="importReviewSummary">Review parsed jobs before saving them to the tracker.</p>
+              </div>
+              <div class="actions">
+                <button type="button" id="saveSelectedDrafts">Save Selected Drafts</button>
+                <button type="button" class="secondary" id="discardDrafts">Discard Drafts</button>
+              </div>
+            </div>
+            <div class="draft-list" id="draftList"></div>
+          </section>
+        </section>
+
+        <section class="workspace-grid">
+          <form class="panel analyzer-panel" id="jobForm">
+            <div class="section-title">
+              <p class="eyebrow">Fit and tailoring review</p>
+              <h2>Analyze a Job</h2>
+            </div>
+
+            <div class="field-grid">
+              <label>
+                Company
+                <input name="company" autocomplete="organization" placeholder="Company name">
+              </label>
+              <label>
+                Job title
+                <input name="title" autocomplete="off" placeholder="Onboarding Specialist">
+              </label>
+              <label>
+                Link
+                <input name="link" type="url" placeholder="https://...">
+              </label>
+              <label>
+                Remote status
+                <select name="remoteStatus">
+                  <option>Remote</option>
+                  <option>Hybrid</option>
+                  <option>On-site</option>
+                  <option>Unknown</option>
+                </select>
+              </label>
+              <label>
+                Salary range
+                <input name="salary" placeholder="$55,000 - $70,000">
+              </label>
+              <label>
+                Source
+                <select name="source">
+                  <option>LinkedIn</option>
+                  <option>Indeed</option>
+                  <option>FlexJobs</option>
+                  <option>Remote.co</option>
+                  <option>We Work Remotely</option>
+                  <option>Idealist</option>
+                  <option>Company site</option>
+                  <option>Other</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Job description
+              <textarea name="description" rows="12" placeholder="Paste the full job description here."></textarea>
+            </label>
+
+            <div class="actions">
+              <button type="submit">Analyze and Save</button>
+              <button type="button" class="secondary" id="clearForm">Clear</button>
+            </div>
+          </form>
+
+          <aside class="panel results-panel" aria-live="polite">
+            <div class="section-title">
+              <p class="eyebrow">Latest Analysis</p>
+              <h2>Fit Review</h2>
+            </div>
+            <div id="emptyResults" class="empty-state">
+              Paste a job description to score it against the active candidate profile.
+            </div>
+            <div id="analysisResults" hidden></div>
+          </aside>
+        </section>
+
+        <section class="panel tracker-panel" aria-labelledby="tracker-title">
+          <div class="tracker-heading">
+            <div class="section-title">
+              <p class="eyebrow">Application pipeline</p>
+              <h2 id="tracker-title">Application Tracker</h2>
             </div>
             <div class="actions">
-              <button type="button" id="saveSelectedDrafts">Save Selected Drafts</button>
-              <button type="button" class="secondary" id="discardDrafts">Discard Drafts</button>
+              <button type="button" class="secondary" id="exportJson">Export JSON</button>
+              <button type="button" class="secondary" id="exportCsv">Export CSV</button>
+              <button type="button" class="danger" id="clearTracker">Clear Tracker</button>
             </div>
           </div>
-          <div class="draft-list" id="draftList"></div>
+
+          <div class="tracker-summary" id="trackerSummary"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role</th>
+                  <th>Score</th>
+                  <th>Angle</th>
+                  <th>Remote</th>
+                  <th>Salary</th>
+                  <th>Status</th>
+                  <th>Follow-up</th>
+                  <th>Notes</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="trackerRows"></tbody>
+            </table>
+          </div>
         </section>
       </section>
 
-      <section class="workspace-grid">
-        <form class="panel analyzer-panel" id="jobForm">
+      <form id="profileForm" class="profile-form" hidden>
+        <section class="tab-panel panel editor-panel" data-tab-panel="skills" aria-labelledby="skills-title">
           <div class="section-title">
-            <p class="eyebrow">Fit and tailoring review</p>
-            <h2>Analyze a Job</h2>
+            <p class="eyebrow">Candidate evidence</p>
+            <h2 id="skills-title">Skills</h2>
+          </div>
+
+          <div class="profile-text-grid">
+            <label>
+              Target roles
+              <textarea name="targetRoles" rows="5" placeholder="One target role per line"></textarea>
+            </label>
+            <label>
+              Skills
+              <textarea name="skills" rows="5" placeholder="One skill per line"></textarea>
+            </label>
+            <label>
+              Tools / platforms
+              <textarea name="tools" rows="5" placeholder="One tool per line"></textarea>
+            </label>
+            <label>
+              Certifications
+              <textarea name="certifications" rows="5" placeholder="One certification per line"></textarea>
+            </label>
+            <label>
+              Education
+              <textarea name="education" rows="5" placeholder="Education highlights"></textarea>
+            </label>
+            <label>
+              Proof points
+              <textarea name="proofPoints" rows="5" placeholder="Truthful work-history proof points"></textarea>
+            </label>
+            <label class="profile-wide">
+              Dealbreakers
+              <textarea name="dealbreakers" rows="4" placeholder="Commission-only, unclear company, no pay listed, etc."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Save Skills</button>
+            <span class="form-note">These fields feed search strategy and fit scoring.</span>
+          </div>
+        </section>
+
+        <section class="tab-panel panel editor-panel" data-tab-panel="resume" aria-labelledby="resume-title">
+          <div class="section-title">
+            <p class="eyebrow">Resume tracking v1</p>
+            <h2 id="resume-title">Resume</h2>
+          </div>
+
+          <div class="resume-grid">
+            <label>
+              Resume version label
+              <input name="resumeLabel" placeholder="Base resume, Customer Success version, etc.">
+            </label>
+            <label>
+              Notes
+              <textarea name="resumeNotes" rows="6" placeholder="Notes for tailoring this resume version"></textarea>
+            </label>
+            <label class="profile-wide">
+              Optional pasted resume text
+              <textarea name="resumeText" rows="14" placeholder="Optional. Keep this local and text-based for now."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Save Resume Notes</button>
+            <span class="form-note">No PDF/DOCX parsing or cloud storage is used.</span>
+          </div>
+        </section>
+
+        <section class="tab-panel panel editor-panel" data-tab-panel="settings" aria-labelledby="profile-title">
+          <div class="tracker-heading">
+            <div class="section-title">
+              <p class="eyebrow">Candidate foundation</p>
+              <h2 id="profile-title">Profile / Settings</h2>
+            </div>
           </div>
 
           <div class="field-grid">
             <label>
-              Company
-              <input name="company" autocomplete="organization" placeholder="Company name">
+              Display name
+              <input name="displayName" autocomplete="name" placeholder="Candidate name">
             </label>
             <label>
-              Job title
-              <input name="title" autocomplete="off" placeholder="Onboarding Specialist">
+              Preferred work arrangements
+              <input name="preferredWorkArrangements" placeholder="Remote, Hybrid">
             </label>
             <label>
-              Link
-              <input name="link" type="url" placeholder="https://...">
+              Preferred locations
+              <input name="preferredLocations" placeholder="Remote, Florida, United States">
             </label>
             <label>
-              Remote status
-              <select name="remoteStatus">
-                <option>Remote</option>
-                <option>Hybrid</option>
-                <option>On-site</option>
-                <option>Unknown</option>
-              </select>
+              Minimum acceptable pay
+              <input name="minimumPay" placeholder="$55,000">
+            </label>
+            <label class="check-label profile-check">
+              <input name="payMustBeListed" type="checkbox">
+              Pay must be listed
             </label>
             <label>
-              Salary range
-              <input name="salary" placeholder="$55,000 - $70,000">
-            </label>
-            <label>
-              Source
-              <select name="source">
-                <option>LinkedIn</option>
-                <option>Indeed</option>
-                <option>FlexJobs</option>
-                <option>Remote.co</option>
-                <option>We Work Remotely</option>
-                <option>Idealist</option>
-                <option>Company site</option>
-                <option>Other</option>
-              </select>
+              Salary notes
+              <input name="salaryNotes" placeholder="Pay visibility, benefits, schedule notes">
             </label>
           </div>
 
-          <label>
-            Job description
-            <textarea name="description" rows="12" placeholder="Paste the full job description here."></textarea>
-          </label>
+          <div class="data-safety-panel">
+            <div>
+              <h3>Data Safety</h3>
+              <p>Backups and imports stay local to this browser unless you choose to move the downloaded JSON file.</p>
+            </div>
+            <div class="actions">
+              <button type="button" class="secondary" id="exportFullBackup">Export Full Backup</button>
+              <button type="button" class="secondary" id="importFullBackup">Import Full Backup JSON</button>
+              <button type="button" class="secondary" id="exportCandidateProfile">Export Candidate Profile</button>
+              <button type="button" class="secondary" id="importCandidateProfile">Import Candidate Profile</button>
+              <button type="button" class="secondary" id="exportLegacyTracker" hidden>Export Legacy Julie Tracker</button>
+            </div>
+          </div>
 
           <div class="actions">
-            <button type="submit">Analyze and Save</button>
-            <button type="button" class="secondary" id="clearForm">Clear</button>
+            <button type="submit">Save Profile</button>
+            <span class="form-note">Saved only in this browser. No cloud sync or account is used.</span>
           </div>
-        </form>
-
-        <aside class="panel results-panel" aria-live="polite">
-          <div class="section-title">
-            <p class="eyebrow">Latest Analysis</p>
-            <h2>Fit Review</h2>
-          </div>
-          <div id="emptyResults" class="empty-state">
-            Paste a job description to score it against Julie's strongest role angles.
-          </div>
-          <div id="analysisResults" hidden></div>
-        </aside>
-      </section>
-
-      <section class="panel tracker-panel" aria-labelledby="tracker-title">
-        <div class="tracker-heading">
-          <div class="section-title">
-            <p class="eyebrow">Application pipeline</p>
-            <h2 id="tracker-title">Application Tracker</h2>
-          </div>
-          <div class="actions">
-            <button type="button" class="secondary" id="exportJson">Export JSON</button>
-            <button type="button" class="secondary" id="exportCsv">Export CSV</button>
-            <button type="button" class="danger" id="clearTracker">Clear Tracker</button>
-          </div>
-        </div>
-
-        <div class="tracker-summary" id="trackerSummary"></div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Company</th>
-                <th>Role</th>
-                <th>Score</th>
-                <th>Angle</th>
-                <th>Remote</th>
-                <th>Salary</th>
-                <th>Status</th>
-                <th>Follow-up</th>
-                <th>Notes</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="trackerRows"></tbody>
-          </table>
-        </div>
-      </section>
+        </section>
+      </form>
     </main>
 
     <template id="tagTemplate">

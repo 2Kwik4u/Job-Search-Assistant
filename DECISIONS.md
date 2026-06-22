@@ -14,3 +14,14 @@
 | 2026-06-18 | Use `2Kwik4u/Job-Search-Assistant` as the project repository. | The user identified this as the canonical GitHub repository for the project. | Active |
 | 2026-06-18 | Show `Possible keyword gaps` only for watched terms found in the job post. | Julie's known skills should not appear as missing just because the job post omits those words. | Active |
 | 2026-06-18 | Show a score explanation without changing the scoring formula. | Julie and reviewers need to understand why a role received its fit score before trusting or acting on it. | Active |
+| 2026-06-21 | Rename the public product to `Job Search Assistant` with subtle Eric Labs branding. | The app is becoming reusable for candidate profiles while preserving Julie as the first migrated user. | Active |
+| 2026-06-21 | Store reusable app state under `job-search-assistant-state-v2`. | A versioned state key allows candidate profiles, jobs, settings, and resume notes without mutating the legacy tracker key. | Active |
+| 2026-06-21 | Automatically copy valid `julie-job-search-tracker-v1` jobs into a Julie candidate profile when no valid v2 state exists. | Julie's saved jobs exist only in her browser localStorage, so migration must happen safely on her device when she opens the updated GitHub Pages app. | Active |
+| 2026-06-21 | Do not delete, overwrite, or mutate `julie-job-search-tracker-v1` in v0.6.0. | The legacy key is Julie's parachute backup during the first migration release. | Active |
+| 2026-06-21 | Add full app backup export/import with validation and replacement confirmation. | Users need a recoverable local-first backup path before and after migration. | Active |
+| 2026-06-21 | Add exact legacy Julie tracker export when the legacy key exists. | Julie needs a raw backup of the old tracker data before relying on the migrated v2 state. | Active |
+| 2026-06-21 | Support one active candidate only in v0.6.0. | This keeps the migration conservative and avoids adding candidate-switching complexity before data safety is validated. | Active |
+| 2026-06-21 | Use text-based resume tracking only for v0.6.0. | Labels, notes, and optional pasted resume text are useful without adding risky file parsing or cloud storage. | Active |
+| 2026-06-21 | Treat `No pay listed` as a visibility flag, not a score penalty. | Pay visibility matters, but the first release should not change scoring weight before real-listing validation. | Active |
+| 2026-06-22 | Add simple in-page tabs for Jobs, Skills, Resume, and Profile / Settings. | The migration foundation made the top of the app settings-heavy; tabs restore Jobs as the main workflow while keeping profile and backup controls available. | Active |
+| 2026-06-22 | Keep Data Safety controls in Profile / Settings and the migration banner. | Backup/export/import actions should be available without dominating the normal job-search workflow. | Active |

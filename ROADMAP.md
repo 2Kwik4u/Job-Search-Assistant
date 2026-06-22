@@ -12,7 +12,7 @@
 - Added targeted job search links.
 - Added manual job-description analysis.
 - Added bulk import of copied job listings.
-- Added fit score, fit tier, matched keywords, possible keyword gaps, weak-fit signals, and red flags.
+- Added fit score, fit category, matched keywords, possible keyword gaps, weak-fit signals, and red flags.
 - Added score explanation showing baseline, boosts, penalties, and tier thresholds.
 - Clarified keyword-gap output so Julie's known skills are not shown as missing when a job post does not mention them.
 - Added truthful tailoring bullet suggestions.
@@ -33,31 +33,62 @@
 - Added local app icons.
 - Added simple versioned service worker caching only the core app shell.
 - Added Android install documentation for the GitHub Pages URL.
+- Renamed the public product to `Job Search Assistant`.
+- Added subtle Eric Labs branding.
+- Added v2 localStorage app state under `job-search-assistant-state-v2`.
+- Added automatic copy-only migration from legacy Julie tracker data into a Julie candidate profile.
+- Preserved `julie-job-search-tracker-v1` without deleting, overwriting, or mutating it.
+- Added a one-time migration banner with full backup and legacy tracker export options.
+- Added full app backup export and validated full app backup import.
+- Added candidate profile export and import.
+- Added one-active-candidate profile foundation without a candidate switcher.
+- Added setup-oriented empty state when no candidate profile or legacy tracker data exists.
+- Added resume tracking v1 with label, notes, and optional pasted resume text.
+- Added salary preference fields for minimum pay, pay-must-be-listed, and notes.
+- Added four fit categories:
+  - Strong fit
+  - Possible fit
+  - Stretch
+  - Not worth applying
+- Added `No pay listed` as a quality/visibility flag without making it a score penalty.
+- Added in-page tabs for Jobs, Skills, Resume, and Profile / Settings.
+- Made Jobs the default landing tab when an active candidate exists.
+- Moved skills/tools/proof-point editing into the Skills tab.
+- Moved resume tracking v1 fields into the Resume tab.
+- Moved profile, salary, backup, and import/export controls into Profile / Settings.
+- Added a subtle active-candidate indicator near the tab navigation.
+- Added a compact Data Safety panel in Profile / Settings.
 
 ## Current Milestone
 
-Stabilize the review-first MVP with real listings and theme review.
+Validate the v0.6.1 navigation polish with real browser data.
 
 Priority work:
 
-- Make the app easy to use during real job-search sessions.
-- Manually review light, dark, and system themes in a real browser.
-- Deploy to GitHub Pages and verify installability on Android.
-- Validate the scoring logic against real pasted listings.
-- Confirm score explanations make sense to Julie during real use.
-- Confirm import review behavior with realistic copied job posts.
-- Improve clarity of review output before adding more automation.
+- Have Julie open the updated GitHub Pages app on her own PC/browser.
+- Confirm her old tracker data is copied into the new v2 app state.
+- Export Full Backup immediately after migration.
+- Export Legacy Julie Tracker if the button is visible.
+- Confirm the migration banner appears once and can be dismissed.
+- Confirm Jobs is the default tab after migration.
+- Confirm Skills, Resume, and Profile / Settings save correctly.
+- Confirm existing tracker jobs remain visible and editable.
+- Confirm new candidate profile fields save locally.
+- Confirm full backup import rejects invalid files and asks before replacing data.
+- Confirm the app still works from the Android installed PWA after refresh.
 - Keep all application actions manual and approval-based.
 
 ## Next Milestone
 
-Run a real-listing validation pass.
+Run a real-listing validation pass after migration is confirmed.
 
 Highest-value next milestone:
 
 - Test the app with 10-15 real copied listings from the target search boards.
 - Test the app in Light, Dark, and System modes during that pass.
 - Test the GitHub Pages PWA install flow on Android.
+- Confirm four fit categories feel understandable to Julie.
+- Confirm `No pay listed` is visible but not over-weighted.
 - Note where parsing succeeds or fails.
 - Note whether scores feel aligned with human judgment.
 - Improve only the smallest usability issues found during that test.
@@ -71,6 +102,10 @@ This milestone prioritizes usability and confidence before adding new capabiliti
 - Search-session checklist.
 - Better scoring explanations.
 - Strong-fit queue view.
+- Candidate profile editor improvements.
+- Multiple candidate profiles and candidate switcher.
+- Resume version duplicate/tweak workflow per job.
+- Backup restore preview before import.
 - Follow-up reminders.
 - Company research checklist.
 - Application quality score.
